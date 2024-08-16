@@ -61,7 +61,7 @@
 
     <button onclick="addCoordinate()">Add coordinates</button>
 
-    <h2>Поиск</h2>
+    <h2>Search</h2>
     <label for="search">Enter coordinates or group:</label>
     <input type="text" id="search" oninput="searchCoordinates()" /><br />
 
@@ -82,7 +82,7 @@
             const comment = document.getElementById("comment").value;
 
             if (isNaN(x) || isNaN(y) || x < -160000 || x > 160000 || y < -160000 || y > 160000) {
-                alert("Координаты должны быть в диапазоне от -160000 до 160000.");
+                alert(" -160000 - 160000.");
                 return;
             }
 
@@ -136,7 +136,7 @@
                     coordinates = JSON.parse(e.target.result);
                     displayCoordinates();
                 } catch (error) {
-                    alert("Ошибка при загрузке файла JSON.");
+                    alert("Load JSON error.");
                 }
             };
             reader.readAsText(file);
