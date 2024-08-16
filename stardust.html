@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmarks Storage</title>
+    <style>
+      body {
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        color: #e94560;
+        font-family: "Arial", sans-serif;
+        text-align: center;
+      }
+      h1,
+      h2 {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      }
+      input[type="number"],
+      input[type="text"] {
+        padding: 10px;
+        margin: 10px 0;
+        border: 2px solid #e94560;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 300px;
+        background-color: #16213e;
+        color: #ffffff;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #e94560;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #d83c50;
+      }
+      .coordinate-item {
+        margin: 5px 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Add Bookmarks</h1>
+
+    <label for="x"> X (-160000 до 160000):</label>
+    <input type="number" id="x" min="-160000" max="160000" /><br />
+
+    <label for="y"> Y (-160000 до 160000):</label>
+    <input type="number" id="y" min="-160000" max="160000" /><br />
+
+    <label for="group">Commander:</label>
+    <input type="text" id="group" /><br />
+
+    <label for="comment">Comment:</label>
+    <input type="text" id="comment" /><br />
+
+    <button onclick="addCoordinate()">Add coordinates</button>
+
+    <h2>Search</h2>
+    <label for="search">Search coordinates or commander:</label>
+    <input type="text" id="search" oninput="searchCoordinates()" /><br />
+
+    <h2>All Bookmarks</h2>
+    <div id="coordinateList"></div>
+
+    <button onclick="downloadtoJSON()">Download to JSON</button
+    ><br /><br /><br />
+    <p>Upload from JSON</p>
+    <input
+      type="file"
+      id="fileInput"
+      accept=".json"
+      onchange="loadJSON(event)"
+    />
+
+    <script>
+      let coordinates = [];
+
+      function addCoordinate() {
+        const x = parseInt(document.getElementById("x").value);
+        const y = parseInt(document.getElementById("y").value);
+        const group = document.getElementById("group").value;
+        const comment = document.getElementById("comment").value;
+
+        if (
+          isNaN(x) ||
+          isNaN(y) ||
+          x < -160000 ||
+          x > 160000 ||
+          y < -160000 ||
+          y > 160000
+        ) {
+          alert("-160000 : 160000.");
+          return;
+        }
+
+        coordinates.push({ x, y, group, comment });
+        displayCoordinates();
+        clearInputs();
+      }
+
+      function displayCoordinates(filter = "") {
+        const list = document.getElementById("coordinateList");
+        list.innerHTML = "";
+
+        coordinates.forEach((coord) => {
+          if (
+            filter === "" ||
+            coord.group.includes(filter) ||
+            coord.x.toString().includes(filter) ||
+            coord.y.toString().includes(filter)
+          ) {
+            const item = document.createElement("div");
+            item.className = "coordinate-item";
+            item.textContent = `X: ${coord.x}, Y: ${coord.y}, Commander: ${coord.group}, Comments: ${coord.comment}`;
+            list.appendChild(item);
+          }
+        });
+      }
+
+      function searchCoordinates() {
+        const searchValue = document.getElementById("search").value;
+        displayCoordinates(searchValue);
+      }
+
+      function clearInputs() {
+        document.getElementById("x").value = "";
+        document.getElementById("y").value = "";
+        document.getElementById("group").value = "";
+        document.getElementById("comment").value = "";
+      }
+
+      function downloadJSON() {
+        const dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(coordinates));
+        const downloadAnchorNode = document.createElement("a");
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "coordinates.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
+
+      function loadJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            coordinates = JSON.parse(e.target.result);
+            displayCoordinates();
+          } catch (error) {
+            alert(" JSON load Error.");
+          }
+        };
+        reader.readAsText(file);
+      }
+    </script>
+  </body>
+</html>
