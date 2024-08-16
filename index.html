@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Координаты</title>
+    <title>Stardust Bookmarks</title>
     <style>
         body {
             background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
@@ -45,30 +45,31 @@
     </style>
 </head>
 <body>
-    <h1>Сохранение координат</h1>
+    <h1>Add Bookmarks</h1>
 
-    <label for="x">Координата X (-160000 до 160000):</label>
+    <label for="x">X (-160000 до 160000):</label>
     <input type="number" id="x" min="-160000" max="160000" /><br />
 
-    <label for="y">Координата Y (-160000 до 160000):</label>
+    <label for="y"> Y (-160000 до 160000):</label>
     <input type="number" id="y" min="-160000" max="160000" /><br />
 
-    <label for="group">Группа:</label>
+    <label for="group">Comander:</label>
     <input type="text" id="group" /><br />
 
-    <label for="comment">Комментарий:</label>
+    <label for="comment">Comment:</label>
     <input type="text" id="comment" /><br />
 
-    <button onclick="addCoordinate()">Добавить координату</button>
+    <button onclick="addCoordinate()">Add coordinates</button>
 
     <h2>Поиск</h2>
-    <label for="search">Введите координаты или группу:</label>
+    <label for="search">Enter coordinates or group:</label>
     <input type="text" id="search" oninput="searchCoordinates()" /><br />
 
-    <h2>Список координат</h2>
+    <h2>Bookmarks</h2>
     <div id="coordinateList"></div>
 
-    <button onclick="downloadJSON()">Скачать JSON</button>
+    <button onclick="downloadJSON()">Download JSON</button><br/><br/><br/>
+    <p>Load Json</p>
     <input type="file" id="fileInput" accept=".json" onchange="loadJSON(event)" />
 
     <script>
@@ -98,7 +99,7 @@
                 if (filter === "" || coord.group.includes(filter) || coord.x.toString().includes(filter) || coord.y.toString().includes(filter)) {
                     const item = document.createElement("div");
                     item.className = "coordinate-item";
-                    item.textContent = `X: ${coord.x}, Y: ${coord.y}, Группа: ${coord.group}, Комментарий: ${coord.comment}`;
+                    item.textContent = `X: ${coord.x}, Y: ${coord.y}, Comander: ${coord.group}, Comment: ${coord.comment}`;
                     list.appendChild(item);
                 }
             });
