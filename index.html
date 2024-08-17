@@ -42,15 +42,24 @@
             padding: 10px;
             border-radius: 5px;
         }
+        .footer {
+    background-color: #f1f1f1;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
     </style>
 </head>
 <body>
     <h1>Add Bookmarks</h1>
 
-    <label for="x">X (-160000 до 160000):</label>
+    <label for="x">X (-320000 to 320000):</label>
     <input type="number" id="x" min="-160000" max="160000" /><br />
 
-    <label for="y"> Y (-160000 до 160000):</label>
+    <label for="y"> Y (-160000 to 480000):</label>
     <input type="number" id="y" min="-160000" max="160000" /><br />
 
     <label for="group">Comander:</label>
@@ -71,6 +80,9 @@
     <button onclick="downloadJSON()">Download JSON</button><br/><br/><br/>
     <p>Load Json</p>
     <input type="file" id="fileInput" accept=".json" onchange="loadJSON(event)" />
+<div class="footer">
+    <a href="https://github.com/Stardust-Exile/Stardust-Exile.github.io">Download HTML</a>
+</div>
 
     <script>
         let coordinates = [];
@@ -81,11 +93,18 @@
             const group = document.getElementById("group").value;
             const comment = document.getElementById("comment").value;
 
-            if (isNaN(x) || isNaN(y) || x < -160000 || x > 160000 || y < -160000 || y > 160000) {
-                alert(" -160000 - 160000.");
-                return;
-            }
+            if (isNaN(x) || isNaN(y)) {
+    alert("Значения x и y должны быть числами.");
+    return;
+}
 
+if (x < -320000 || x > 320000) {
+    alert("Range X -320000 - 320000.");
+}
+
+if (y < -160000 || y > 480000) {
+    alert("Range Y -160000 - 480000.");
+}
             coordinates.push({ x, y, group, comment });
             displayCoordinates();
             clearInputs();
