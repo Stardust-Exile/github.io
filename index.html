@@ -244,12 +244,12 @@
     const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
     const indicesToDelete = Array.from(checkboxes).map(checkbox => parseInt(checkbox.getAttribute('data-index')));
 
-    // Удаляем элементы из массива coordinates, начиная с конца, чтобы не нарушить индексы
+    
     indicesToDelete.sort((a, b) => b - a).forEach(index => {
         coordinates.splice(index, 1);
     });
 
-    displayCoordinates(); // Обновляем отображение таблицы
+    displayCoordinates(); 
 }
 
       function loadJSON(event) {
@@ -287,13 +287,12 @@
             : (aValue < bValue ? 1 : -1);
     });
 
-    // Удаляем старые строки и добавляем отсортированные
+    
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
     }
     tbody.append(...rows);
 
-    // Меняем порядок сортировки
     tbody.dataset.sortOrder = isAscending ? 'desc' : 'asc';
 }
     </script>
