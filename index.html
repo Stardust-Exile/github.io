@@ -72,10 +72,14 @@
       th {
         background-color: #16213e;
       }
+      th {
+    cursor: pointer; 
+}
     </style>
   </head>
   <body>
     <div class="form-container">
+        <a href="https://github.com/Stardust-Exile/Stardust-Exile.github.io" style="color: white;">Download HTML</a>
       <h1>Add Bookmarks</h1>
 
       <label for="x">X (-320000 to 320000):</label>
@@ -90,7 +94,26 @@
       <label for="comment">Comment:</label>
       <input type="text" id="comment" /><br />
 
+
+
+
+      <label for="material">Material:</label>
+      <input type="number" id="material" /><br />
+
+      <label for="gas">Gas:</label>
+      <input type="number" id="gas" /><br />
+
+      <label for="energy">Energy:</label>
+      <input type="number" id="energy" /><br />
+
+      <label for="research">Research:</label>
+      <input type="number" id="research" /><br />
+
+
+      
+
       <button onclick="addCoordinate()">Add coordinates</button>
+      <button onclick="deleteSelected()">DELETE</button>
 
       <h2>Search</h2>
       <label for="search">Enter coordinates or comander:</label>
@@ -110,23 +133,24 @@
       <h2>Bookmarks</h2>
       <table id="coordinateTable">
         <thead>
-          <tr>
-            <th>X</th>
-            <th>Y</th>
-            <th>Comander</th>
-            <th>Comment</th>
-          </tr>
+            <tr>
+                <th onclick="sortTable(0)">Select</th>
+                <th onclick="sortTable(1)">X</th>
+                <th onclick="sortTable(2)">Y</th>
+                <th onclick="sortTable(3)">Comander</th>
+                <th onclick="sortTable(4)">Comment</th>
+                <th onclick="sortTable(5)">Material</th>
+                <th onclick="sortTable(6)">Gas</th>
+                <th onclick="sortTable(7)">Energy</th>
+                <th onclick="sortTable(8)">Research</th>
+            </tr>
         </thead>
         <tbody id="coordinateList"></tbody>
       </table>
+     
     </div>
 
-    <div class="footer">
-      <a href="https://github.com/Stardust-Exile/Stardust-Exile.github.io"
-        >Download HTML</a
-      >
-    </div>
-
+    
     <script>
       let coordinates = [];
 
@@ -135,6 +159,11 @@
         const y = parseInt(document.getElementById("y").value);
         const group = document.getElementById("group").value;
         const comment = document.getElementById("comment").value;
+        const material = parseFloat(document.getElementById("material").value);
+        const gas = parseFloat(document.getElementById("gas").value);
+        const energy = parseFloat(document.getElementById("energy").value);
+        const research = parseFloat(document.getElementById("research").value);
+
 
         if (isNaN(x) || isNaN(y)) {
           alert("Only numbers");
@@ -151,28 +180,38 @@
           return;
         }
 
-        coordinates.push({ x, y, group, comment });
+        coordinates.push({ x, y, group, comment, material, gas, energy, research });
         displayCoordinates();
         clearInputs();
       }
 
       function displayCoordinates(filter = "") {
-        const list = document.getElementById("coordinateList");
-        list.innerHTML = "";
+    const list = document.getElementById("coordinateList");
+    list.innerHTML = "";
 
-        coordinates.forEach((coord) => {
-          if (
+    coordinates.forEach((coord, index) => {
+        if (
             filter === "" ||
             coord.group.includes(filter) ||
             coord.x.toString().includes(filter) ||
             coord.y.toString().includes(filter)
-          ) {
+        ) {
             const row = document.createElement("tr");
-            row.innerHTML = `<td>${coord.x}</td><td>${coord.y}</td><td>${coord.group}</td><td>${coord.comment}</td>`;
+            row.innerHTML = `
+    <td><input type="checkbox" class="delete-checkbox" data-index="${index}"></td>
+    <td>${coord.x}</td> <!-- Столбец X -->
+    <td>${coord.y}</td> <!-- Столбец Y -->
+    <td>${coord.group}</td> <!-- Столбец Comander -->
+    <td>${coord.comment}</td> <!-- Столбец Comment -->
+    <td>${coord.material}</td> <!-- Столбец Material -->
+    <td>${coord.gas}</td> <!-- Столбец Gas -->
+    <td>${coord.energy}</td> <!-- Столбец Energy -->
+    <td>${coord.research}</td> <!-- Столбец Research -->`
+
             list.appendChild(row);
-          }
-        });
-      }
+        }
+    });
+}
 
       function searchCoordinates() {
         const searchValue = document.getElementById("search").value;
@@ -184,6 +223,10 @@
         document.getElementById("y").value = "";
         document.getElementById("group").value = "";
         document.getElementById("comment").value = "";
+        document.getElementById("material").value = "";
+        document.getElementById("gas").value = "";
+        document.getElementById("energy").value = "";
+        document.getElementById("research").value = "";
       }
 
       function downloadJSON() {
@@ -197,6 +240,17 @@
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
       }
+      function deleteSelected() {
+    const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
+    const indicesToDelete = Array.from(checkboxes).map(checkbox => parseInt(checkbox.getAttribute('data-index')));
+
+    // Удаляем элементы из массива coordinates, начиная с конца, чтобы не нарушить индексы
+    indicesToDelete.sort((a, b) => b - a).forEach(index => {
+        coordinates.splice(index, 1);
+    });
+
+    displayCoordinates(); // Обновляем отображение таблицы
+}
 
       function loadJSON(event) {
         const file = event.target.files[0];
@@ -213,6 +267,35 @@
         };
         reader.readAsText(file);
       }
+
+      function sortTable(columnIndex) {
+    const table = document.getElementById("coordinateTable");
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+    const isAscending = tbody.dataset.sortOrder === 'asc';
+
+    rows.sort((a, b) => {
+        const aText = a.cells[columnIndex].textContent.trim();
+        const bText = b.cells[columnIndex].textContent.trim();
+
+        // Преобразуем текст в число, если это возможно
+        const aValue = isNaN(aText) ? aText : parseFloat(aText);
+        const bValue = isNaN(bText) ? bText : parseFloat(bText);
+
+        return isAscending 
+            ? (aValue > bValue ? 1 : -1) 
+            : (aValue < bValue ? 1 : -1);
+    });
+
+    // Удаляем старые строки и добавляем отсортированные
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+    tbody.append(...rows);
+
+    // Меняем порядок сортировки
+    tbody.dataset.sortOrder = isAscending ? 'desc' : 'asc';
+}
     </script>
   </body>
 </html>
